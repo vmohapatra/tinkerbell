@@ -22,5 +22,5 @@ or
 $ node server.js --standalone
 To start the app in any other environment, set NODE_ENV environment variable to one of test, int or prod
 
-In your browser of choice, navigate to http://localhost:54321.
+In your browser of choice, navigate to http://localhost:12345.
 
