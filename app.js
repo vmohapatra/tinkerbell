@@ -80,13 +80,6 @@ if (app.get('env') === 'dev') {
     app.use(prodErrorHandler);
 }
 
-//calculateBestDeal(new Date('2016-01-15'), 10, [178280]);
-Date.prototype.addDays = function(days) {
-    this.setDate(this.getDate() + parseInt(days));
-    return this;
-};
-
-
 var Cluster = require('./modules/cluster_support');
 module.exports = new Cluster(app);
 
@@ -105,6 +98,15 @@ function developmentErrorHandler(err, req, res, next) {
         error: err
     });
 }
+
+/*
+
+//calculateBestDeal(new Date('2016-01-15'), 10, [178280]);
+Date.prototype.addDays = function(days) {
+    this.setDate(this.getDate() + parseInt(days));
+    return this;
+};
+
 var gatherFlightData = function(tlas, startDate, endDate, los, db, callback) {
     var result = {};
     var tla;
@@ -158,7 +160,8 @@ var gatherHotelData = function (rids, startDate, endDate, db, callback) {
 };
 
 
-calculateBestDeal(new Date('2016-02-20'), 4, [178280, 180077, 178248, 178294,178293], 0, 100000);
+//calculateBestDeal(new Date('2016-02-20'), 4, [178280, 180077, 178248, 178294,178293], 0, 100000);
+
 
 function calculateBestDeal(departDate, los, rids, minPrice, maxPrice) {
 
@@ -236,8 +239,8 @@ function calculateBestDeal(departDate, los, rids, minPrice, maxPrice) {
                         }
                     }
 
-                    /*Loop over each potential trip interval. Sum each interval
-                     package total, and add to list.*/
+                    //Loop over each potential trip interval. Sum each interval
+                     //package total, and add to list.
                     var startIntervalDate = new Date(startDate.getTime());
                     var maxStartDate = new Date(endDate.getTime());
                     maxStartDate.addDays(-los);
@@ -296,3 +299,4 @@ function calculateBestDeal(departDate, los, rids, minPrice, maxPrice) {
         });
     });
 }
+*/
