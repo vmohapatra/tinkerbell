@@ -1,0 +1,67 @@
+<!--Graph-->
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<div id="graph-data" style="visibility:hidden"></div>
+<div id="graph-container" style="min-width: 310px; width:80%;height: 400px; margin: 0 auto"></div>
+<script>
+    $(function() {
+        $('#graph-container').highcharts({
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: 'Predicted prices for your search'
+            },
+            xAxis: {
+                categories: ['Los Angeles', 'Maui', 'Chicago', 'Orlando', 'New York']
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'Predicted total cost of trip '
+                },
+                stackLabels: {
+                    enabled: true,
+                    style: {
+                        fontWeight: 'bold',
+                        color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+                    }
+                }
+            },
+            legend: {
+                align: 'right',
+                x: -30,
+                verticalAlign: 'top',
+                y: 25,
+                floating: true,
+                backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || 'white',
+                borderColor: '#CCC',
+                borderWidth: 1,
+                shadow: false
+            },
+            tooltip: {
+                headerFormat: '<b>{point.x}</b><br/>',
+                pointFormat: '{series.name}: {point.y} USD<br/>Total: {point.stackTotal} USD'
+            },
+            plotOptions: {
+                column: {
+                    stacking: 'normal',
+                    dataLabels: {
+                        enabled: true,
+                        color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white',
+                        style: {
+                            textShadow: '0 0 3px black'
+                        }
+                    }
+                }
+            },
+            series: [{
+                name: 'Hotel',
+                data: [198, 266, 180, 156, 317 ]
+            }, {
+                name: 'Flight',
+                data: [244, 553, 326, 304, 375]
+            }]
+        });
+    });
+</script>

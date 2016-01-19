@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<!--[if IE 9]> <!DOCTYPE html class="ie9"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en">
+<!--<![endif]-->
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Tell Me</title>
+
+    <link rel='stylesheet' href='/stylesheets/reset.css' />
+    <link rel="stylesheet" href="/script/libs/jQRangeSlider-5.7.1/css/classic.css">
+
+    <!-- Styles -->
+    <!-- Bootstrap -->
+    <link href="/stylesheets/bootstrap/bootstrap.min.css" rel="stylesheet">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,600|Cinzel' rel='stylesheet' type='text/css'>
+
+    <!-- Custom styles for this page -->
+    <link rel="stylesheet" href="/stylesheets/custom/custom-main.css">
+    <link rel="stylesheet" href="/stylesheets/custom/custom-responsive.css">
+
+    <!--[if lt IE 10]>
+        <link rel="stylesheet" href="/stylesheets/custom/custom-ie.css">
+    <![endif]-->
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!--Plugin Styles-->
+    <link rel="stylesheet" href="/stylesheets/plugins/fonts.css">
+    <link rel="stylesheet" href="/stylesheets/plugins/font-awesome.min.css">
+    <link rel="stylesheet" href="/stylesheets/plugins/animate.css">
+
+
+    <!--<link rel="stylesheet" href="/stylesheets/plugins/responsive.css">-->
+
+    <!-- Favicon and Apple Icons -->
+    <link rel="shortcut icon" type="image/x-icon" href="http://ewe-assets.s3.amazonaws.com/uitoolkit/1-19/0e5adbb3bced98b6ce7da6d7573c979e10ffc07d/core/images/favicon.ico" sizes="16x16 32x32" />
+    <link rel="icon" type="image/x-icon" href="http://ewe-assets.s3.amazonaws.com/uitoolkit/1-19/0e5adbb3bced98b6ce7da6d7573c979e10ffc07d/core/images/favicon.ico" sizes="16x16 32x32" />
+
+    <!--- jQuery -->
+    <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.min.js"></script>
+    <script src="/script/libs/jQRangeSlider-5.7.1/lib/jquery.mousewheel.min.js"></script>
+    <script src="/script/libs/jQRangeSlider-5.7.1/jQDateRangeSlider-withRuler-min.js"></script>
+
+    <!-- Queryloader -->
+    <script src="/script/libs/queryloader2.min.js"></script>
+
+    <!-- Modernizr -->
+    <script src="/script/libs/modernizr.js"></script>
+
+    <script src="/script/plugins/plugins.js"></script>
+
+</head>
+
+<body>
+    <div class="site-header">
+        <img class="exp-logo" src="images/logo/exp-logo.svg" />
+        <div class="tagline-container">
+            <h3 class="game-tagline">Let's get planning!</h3>
+        </div>
+        <br/>
+        {{> parallax}}
+    </div>
+
+    <div class="site-content">
+        {{> portfolio}}
+        {{> datePicker}}
+        {{> graph}}
+    </div>
+
+    <div class="site-footer">
+        {{> next-button}}
+        {{> search-button}}
+        <!-- Plugins -->
+
+        <script src="/script/app/main.js"></script>
+        <script src="/script/app/tellMe.js"></script>
+    </div>
+</body>
+
+</html>

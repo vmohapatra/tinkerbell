@@ -1,0 +1,184 @@
+/************************************************************
+Landscape phones and down (max 480px)
+************************************************************/
+@media screen and (min-width: 100px) {
+img.exp-logo {
+    height: 2em;
+    width: 5em;
+}
+.row {
+    margin-right: -0.25em;
+    margin-left: -0.25em;
+}
+.count {
+    font-size: 1em;
+}
+.count-container h3 {
+    font-size: 1em;
+}
+.visible-xs {
+    display: none!important;
+}
+.section {
+    padding: 0 0;
+}
+.section {
+    padding: 0.75em 0.75em;
+}
+
+
+#div_footerContainer_1, #div_footerContainer_2 {
+    width:90px;
+    margin: 0 auto;
+}
+        
+#div_destinationBtnContainer {
+    height: 80px;
+    width: 80px;
+    border-radius: 80px;
+}
+    
+#div_destBtnBgImgContainer {
+    margin-left: 24px;
+    margin-top: 24px;
+}
+#div_destMapBtnContainer, #div_destMapBtnBgImgContainer, #div_destMapBtnText {
+    display: none;
+}
+        
+#div_destinationBtnContainer , #div_destBtnBgImgContainer {
+    display: block;
+}
+
+
+}
+
+@media screen and (min-width: 253px) {
+img.exp-logo {
+    height: 3em;
+    width: 6em;
+}
+.section {
+    padding: 1em 1em;
+}
+}
+
+@media screen and (min-width: 400px) {
+.portfolio-item.active:before {
+    width: 100%;
+}
+}
+
+@media screen and (min-width: 462px) {
+.photoSelect {
+    right: 0;
+}
+img.exp-logo {
+    height: 4em;
+    width: 8em;
+}
+.count {
+    font-size: 1.5em;
+}
+.count-container h3 {
+    font-size: 1.25em;
+}
+.lg-margin {
+    margin-bottom: 1em !important;
+    margin-top: 1em !important;
+}
+.get-started {
+    font-size: 1.5em;
+}
+.section {
+    padding: 1.25em 1.25em;
+}
+}
+/************************************************************
+Transitioning widths
+************************************************************/
+
+@media screen and (min-width: 500px) {
+}
+/************************************************************
+Landscape phone to portrait tablet (max 767px)
+************************************************************/
+@media screen and (min-width: 600px) {
+.section {
+    padding: 1.5em 1.5em;
+}
+#div_footerContainer_1, #div_footerContainer_2 {
+    width:100%;
+}
+#div_destMapBtnContainer, #div_destMapBtnBgImgContainer, #div_destMapBtnText  {
+    display: block;
+}
+    
+#div_footerContainer_1 #div_destMapBtnContainer {
+    background-color: rgba(255,196,0,0.9);
+    box-shadow: 0 0 0 1em rgba(255,196,0,0.6);
+}
+    
+#div_footerContainer_2 #div_destMapBtnContainer {
+    background-color: rgba(101,172,19,0.9);
+    box-shadow: 0 0 0 1em rgba(101,172,19,0.6);
+}
+
+.innerProgress {
+    opacity: 0.6;
+}
+    
+#spn_destMapBtnBgImg {
+    margin-top: 97px;
+    margin-left: 219px;
+}
+    
+#div_destinationBtnContainer , #div_destBtnBgImgContainer {
+    display: none;
+}
+
+}
+/************************************************************
+Portrait tablet to landscape and desktop (768px - 979px) 
+************************************************************/
+@media screen and (min-width: 768px) {
+.col-sm-4 {
+    width: 25%;
+}
+.lg-margin {
+    margin-bottom: 1.5em !important;
+    margin-top: 1.5em !important;
+}
+.section {
+    padding: 1.75em 1.75em;
+}
+}
+
+@media screen and (min-width: 800px) {
+.count {
+    font-size: 2em;
+}
+.count-container h3 {
+    font-size: 1.5em;
+}
+.get-started {
+    font-size: 1.75em;
+}
+.section {
+    padding: 2em 2em;
+}
+}
+/************************************************************
+Large desktop (1200px)
+************************************************************/
+@media screen and (min-width: 1224px) {
+.count {
+    font-size: 3em;
+}
+.count-container h3 {
+    font-size: 1.75em;
+}
+.get-started {
+    font-size: 2em;
+}
+}
