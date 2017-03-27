@@ -550,37 +550,56 @@
 
     Geass.init();
 
-
-
-    
 var calculateBestDeal = function(departDateVal, los, rids) {
     var regionidsToTlas = {}, rid;
-    regionidsToTlas['178276'] = ['LAS'];
-    regionidsToTlas['178293'] = ['JFK', 'EWR', 'LGA', 'JRB', 'ISP'];
-    regionidsToTlas['178294'] = ['MCO', 'SFB'];
-    regionidsToTlas['178286'] = ['MIA'];
-    regionidsToTlas['178280'] = ['SNA', 'LAX', 'ONT', 'BUR', 'LGB'];
-    regionidsToTlas['178304'] = ['SAN', 'CLD'];
-    regionidsToTlas['178248'] = ['ORD', 'MDW', 'RFD'];
-    regionidsToTlas['178305'] = ['SFO', 'SJC', 'OAK'];
-    regionidsToTlas['180077'] = ['HNL'];
-    regionidsToTlas['601685'] = ['MYR'];
-    regionidsToTlas['178239'] = ['BOS'];
-    regionidsToTlas['178318'] = ['BWI', 'IAD', 'DCA'];
-    regionidsToTlas['603224'] = ['SNA'];
-    regionidsToTlas['178292'] = ['MSY', 'NEW'];
-    regionidsToTlas['601750'] = ['MIA', 'FLL'];
-    regionidsToTlas['178232'] =['ATL', 'PDK'];
-    regionidsToTlas['180073'] = ['OGG'];
-    regionidsToTlas['6023765'] = ['MCO', 'SFB', 'MIA'];
 
-    var rid;
+    regionidsToTlas['178276']    = ['LAS'];
+    regionidsToTlas['178293']    = ['JFK', 'EWR', 'LGA', 'JRB', 'ISP'];
+    regionidsToTlas['178294']    = ['MCO', 'SFB'];
+    regionidsToTlas['178286']    = ['MIA'];
+    regionidsToTlas['178280']    = ['SNA', 'LAX', 'ONT', 'BUR', 'LGB'];
+    regionidsToTlas['178304']    = ['SAN', 'CLD'];
+    regionidsToTlas['178248']    = ['ORD', 'MDW', 'RFD'];
+    regionidsToTlas['178305']    = ['SFO', 'SJC', 'OAK'];
+    regionidsToTlas['180077']    = ['HNL'];
+    regionidsToTlas['601685']    = ['MYR'];
+    regionidsToTlas['178239']    = ['BOS'];
+    regionidsToTlas['178318']    = ['BWI', 'IAD', 'DCA'];
+    regionidsToTlas['603224']    = ['SNA'];
+    regionidsToTlas['178292']    = ['MSY', 'NEW'];
+    regionidsToTlas['601750']    = ['MIA', 'FLL'];
+    regionidsToTlas['178232']    = ['ATL', 'PDK'];
+    regionidsToTlas['180073']    = ['OGG'];
+    regionidsToTlas['6023765']   = ['MCO', 'SFB', 'MIA'];
+
     var departDate = new Date(departDateVal);
     var startDate = new Date(departDate.getTime()),
         endDate = new Date(departDate.getTime());
 
+    function compareDate(a,b) {
+        if (a.date < b.date)
+            return -1;
+        if (a.date > b.date)
+            return 1;
+        return 0;
+    }
+
+    function getFormattedDateCategory(dateString) {
+        var m_names = new Array("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec");
+        var d = new Date(dateString);
+        var curr_date = d.getDate();
+        var curr_month = d.getMonth();
+        var curr_year = d.getFullYear();
+        //console.log(curr_date + "-" + m_names[curr_month] + "-" + curr_year);
+        return (curr_date + "-" + m_names[curr_month] + "-" + curr_year);
+    }
+
+    //Initialize arrays for the graph to be displayed 
+    var results=[], graphCategory = [], hotelPriceData=[], flightPriceData=[], tlaData=[];
+
     for (var i = 0; i < rids.length; i++) {
         rid = rids[i];
+
         console.log(
         '/mymongo?'
         +'regionId='+rid
@@ -588,100 +607,119 @@ var calculateBestDeal = function(departDateVal, los, rids) {
         +'&departDate='+departDateVal
         +'&los='+los
         );
+
         var mongourl = '/mymongo?'
         +'regionId='+rid
         +'&regionidsToTlas='+regionidsToTlas[rid]
         +'&departDate='+departDateVal
         +'&los='+los;
 
-        
+        //Get mongo data for each rid
         $.get(mongourl, function(res) {
-           //$('#val').text(res);
-           console.log("server mongo response: ");
-           console.log(res);
-           var graphCategory = [], hotelPriceData=[], flightPriceData=[];
-           //populate the graph with data from mongo
-           for(var i =0;i<res.totalDeals;i++) {
-               console.log(res.pricePackages[i].tla);
-               graphCategory.push(res.pricePackages[i].tla);
-               hotelPriceData.push(res.pricePackages[i].hotelprice);
-               flightPriceData.push(res.pricePackages[i].flightprice);
-               
+            //$('#val').text(res);
+            console.log("server mongo response: ");
+            console.log(res);
+            //populate the graph with data from mongo
+            for(var j =0;j<res.totalDeals;j++) {
+                //Pushing pricepackages into results[]
+                results.push(res.pricePackages[j]);
+                //console.log(res.pricePackages[j].tla + " " + res.pricePackages[j].date);
+                //graphCategory.push(res.pricePackages[j].date);
+                //console.log(res.pricePackages[j].hotelprice);
+                //hotelPriceData.push(res.pricePackages[j].hotelprice);
+                //console.log(res.pricePackages[j].flightprice);
+                //flightPriceData.push(res.pricePackages[j].flightprice);
+                //console.log(res.pricePackages[j].tla);
+                //tlaData.push(res.pricePackages[j].tla);
+            }
+            //console.log(graphCategory);
+
+            //Sort results by date
+            results.sort(compareDate);
+            console.log(results);
+
+           for(var iCount=0; iCount < results.length; iCount++) {
+                graphCategory[iCount] = getFormattedDateCategory(results[iCount].date);
+                hotelPriceData[iCount] = results[iCount].hotelprice;
+                flightPriceData[iCount] =results[iCount].flightprice;
+                tlaData[iCount] = results[iCount].tla;
            }
-           
-           
-           console.log(graphCategory);
 
-
-
-           
-    $(function() {
-        $('#graph-container').highcharts({
-            chart: {
-                type: 'column'
-            },
-            title: {
-                text: 'Predicted prices for your search'
-            },
-            xAxis: {
-                categories: graphCategory //['Los Angeles', 'Maui', 'Chicago', 'Orlando', 'New York']
-            },
-            yAxis: {
-                min: 0,
-                title: {
-                    text: 'Predicted total cost of trip '
-                },
-                stackLabels: {
-                    enabled: true,
-                    style: {
-                        fontWeight: 'bold',
-                        color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
-                    }
+            $(function() {
+                //$('#graph-container').highcharts({
+                Highcharts.chart('graph-container', {
+                    chart: {
+                        type: 'column'
+                    },
+                    title: {
+                        text: 'Predicted prices for your search on dates'
+                    },
+                    xAxis: {
+                        categories: graphCategory //['Los Angeles', 'Maui', 'Chicago', 'Orlando', 'New York'] // Date
+                    },
+                    yAxis: {
+                        min: 0,
+                        title: {
+                            text: 'Predicted total cost of trip '
+                        },
+                        stackLabels: {
+                            enabled: true,
+                            style: {
+                            fontWeight: 'bold',
+                            color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+                        }
                 }
-            },
-            legend: {
-                align: 'right',
-                x: -30,
-                verticalAlign: 'top',
-                y: 25,
-                floating: true,
-                backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || 'white',
-                borderColor: '#CCC',
-                borderWidth: 1,
-                shadow: false
-            },
-            tooltip: {
-                headerFormat: '<b>{point.x}</b><br/>',
-                pointFormat: '{series.name}: {point.y} USD<br/>Total: {point.stackTotal} USD'
-            },
-            plotOptions: {
-                column: {
-                    stacking: 'normal',
-                    dataLabels: {
-                        enabled: true,
-                        color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white',
-                        style: {
-                            textShadow: '0 0 3px black'
+                    },
+                    legend: {
+                        align: 'right',
+                        x: -30,
+                        verticalAlign: 'top',
+                        y: 25,
+                        floating: true,
+                        backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || 'white',
+                        borderColor: '#CCC',
+                        borderWidth: 1,
+                        shadow: false
+                    },
+                    tooltip: {
+                        //headerFormat: '<b>{this.series.userOptions.tla}</b><br/>',//point.x
+                        //pointFormat: '{series.name}: {point.y} USD<br/>Total: {point.stackTotal} USD',
+                        formatter: function () {
+                            //console.log(this.series.userOptions.stack);
+                            //console.log(this.series.userOptions);
+                            //console.log(this.series.xAxis.categories[this.point.index]);
+                            return '<b>' + this.series.userOptions.stack[this.point.index] + ' : ' +getFormattedDateCategory(this.series.xAxis.categories[this.point.index])+'</b><br/>' +
+                                this.series.name + ': ' + this.y + '<br/>' +
+                                'Total: ' + this.point.stackTotal;
+                        }
+                    },
+                    plotOptions: {
+                        column: {
+                        stacking: 'normal',
+                        dataLabels: {
+                            enabled: true,
+                            color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white',
+                            style: {
+                                textShadow: '0 0 3px black'
+                            }
                         }
                     }
-                }
             },
-            series: [{
-                name: 'Hotel',
-                data: hotelPriceData //[198, 266, 180, 156, 317 ]
-            }, {
-                name: 'Flight',
-                data: flightPriceData //[244, 553, 326, 304, 375]
-            }]
+                    series: [{
+                        name: 'Hotel',
+                        data: hotelPriceData, //[198, 266, 180, 156, 317 ]
+                        stack: tlaData //"OGG"
+                    },
+                    {
+                        name: 'Flight',
+                        data: flightPriceData, //[244, 553, 326, 304, 375]
+                        stack: tlaData
+                    }]
+                });
+            });
+            //Show graphs after config
+            $('#graph-container').css('display','block');
         });
-    });
-    //Show graphs after config
-    $('#graph-container').css('display','block');
-       
-           
-           
-        });
-
     }
 }
 

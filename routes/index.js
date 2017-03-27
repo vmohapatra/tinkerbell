@@ -15,6 +15,11 @@ module.exports = function (config) {
     };
 
     var gatherFlightData = function(tlas, startDate, endDate, los, db, callback) {
+        console.log("tlas : "+tlas);
+        console.log("startDate : "+startDate);
+        console.log("endDate : "+endDate);
+        console.log("los : "+los);
+
         var result = {};
         var tla;
 
@@ -23,9 +28,12 @@ module.exports = function (config) {
             result[tla] = [];
         }
 
-        var cursor = db.collection('processedFlightData').find({$and: [{destination:{$in: tlas}},
-            {arrival: {$gte: startDate, $lt: endDate}},
-            {departure: {$gte: startDate, $lt: endDate}}]});
+        //Find a match for the TLA where flying from date 
+        var cursor = db.collection('processedFlightsData').find({$and: 
+            [ {destination:{$in: tlas}},
+              {departure: {$gte: startDate, $lt: endDate}},
+              {arrival: {$gte: startDate, $lt: endDate}} ]
+        });
 
         cursor.each(function(err, doc) {
             if (doc != null) {
@@ -34,12 +42,15 @@ module.exports = function (config) {
                 var departure = new Date(doc['departure']);
                 var price = doc['minPrice'];
                 var dest = doc['destination'];
-                departure.addDays(los);
+                //add length of stay to the fetched departure date
+                departure.addDays(parseInt(7));
+                //If departure + length of stay is equal to predicted arrival time we have a deal
                 if (departure.getTime() === arrival.getTime()) {
-                    result[dest].push({departure:departure, price:price});
+                    result[dest].push({departure:departure.toISOString(), price:price});
                 }
             } 
             else {
+                //Gather hotel data for each flight data result
                 callback(result);
             }
         });
@@ -47,12 +58,16 @@ module.exports = function (config) {
 
 
     var gatherHotelData = function (rid, startDate, endDate, db, callback) {
-        var result = [];
+            var result = [];
 
-        console.log("RID: " + parseInt(rid, 10));
-        var cursor = db.collection('regionTrendsData').aggregate([{$match: {$and: [{pid: parseInt(rid, 10)},
-            {stayDate: {$gte: startDate, $lt: endDate}}]}},
-            {$group:{_id: { pid:"$pid",stayDate:"$stayDate"}, avgPrice: { $avg: "$price" }}}]);
+            console.log("RID: " + parseInt(rid, 10));
+            var cursor = db.collection('regionTrendsData').aggregate(
+                             [{ $match: {$and: [{pid: parseInt(rid, 10)},
+                                                {stayDate: {$gte: startDate, $lt: endDate}}]
+                                        }},
+                                        {$group:{_id: { pid:"$pid",stayDate:"$stayDate"}, 
+                                        avgPrice: { $avg: "$price" }}
+                            }]);
 
 
         cursor.each(function(err, doc) {
@@ -61,7 +76,7 @@ module.exports = function (config) {
                 var stayDate = new Date(doc['_id']['stayDate']);
                 var rid = doc['_id']['pid'];
                 var price = doc['avgPrice'];
-                result.push({rid:rid, stayDate:stayDate, price:price});
+                result.push({rid:rid, stayDate:stayDate.toISOString(), price:price});
             } 
             else {
                 callback(result);
@@ -79,8 +94,6 @@ module.exports = function (config) {
     //get some server data for sending it to the client
     var getMongoData = function(req, res) {
         console.log(req.protocol+"://"+req.host+req.originalUrl);
-
-        console.log(req.originalUrl);
         var rid = getParameterByName('regionId',req.originalUrl);
         var regionidsToTlas = getParameterByName('regionidsToTlas',req.originalUrl).split(',');
         var departDateVal = getParameterByName('departDate',req.originalUrl);
@@ -102,10 +115,10 @@ module.exports = function (config) {
             pricePackages = [],
             bestDeal = null;
 
-        startDate.addDays(-7);
-        endDate.addDays(los+7)
+        startDate = startDate.addDays(-7);//Subtract 7 days from starting date
+        endDate = endDate.addDays(parseInt(los)+7);//Add 7 days  and length of stay to the startDate
 
-        var url = 'mongodb://10.0.17.180:27017/tellme-db';
+        var url = 'mongodb://localhost/tinkerbell-db';
         /*
         MongoClient.connect(url, function(err, db) {
             console.log("Connected correctly to Joshua's server at http://10.0.17.180:27017/tellme-db.");
@@ -123,8 +136,13 @@ module.exports = function (config) {
         */
 
         MongoClient.connect(url, function(err, db) {
-            gatherFlightData(regionidsToTlas, startDate, endDate, los, db, function(flightResult) {
-                gatherHotelData(rid, startDate, endDate, db, function (hotelResult) {
+
+            //First gather flight data
+            gatherFlightData(regionidsToTlas, startDate.toISOString(), endDate.toISOString(), los, db, function(flightResult) {
+                console.log(flightResult);
+
+                //Gather hotel data for every flight data result
+                gatherHotelData(rid, startDate.toISOString(), endDate.toISOString(), db, function (hotelResult) {
 
                 //Loop over hotels data, map staydate to price
                 for (var j = 0; j < hotelResult.length; j++) {
@@ -132,6 +150,7 @@ module.exports = function (config) {
                         hotelPrices[hotelResult[j]["stayDate"]] = Math.round(hotelResult[j]["price"]);
                     }
                 }
+                console.log(hotelPrices);
 
                 //Loop over flights data, map departdate to tla/price
                 var tlas = regionidsToTlas;
@@ -155,32 +174,39 @@ module.exports = function (config) {
 
                 }
 
+                console.log(flightPrices);
+
                 /*Loop over each potential trip interval. Sum each interval
                 package total, and add to list.*/
                 var startIntervalDate = new Date(startDate.getTime());
                 var maxStartDate = new Date(endDate.getTime());
-                maxStartDate.addDays(-los);
+
+                //maxStartDate.addDays(-los);
+                maxStartDate.addDays(-7);
+
                 while (startIntervalDate < maxStartDate) {
                     var hotelSum = 0;
                     var currStayDate = new Date(startIntervalDate.getTime());
-                    for (var j = 0; j < los; j++) {
-                        if (currStayDate in hotelPrices) {
-                            hotelSum += hotelPrices[currStayDate];
+                    console.log("currStayDate : "+currStayDate.toISOString());
+                    for (var j = 0; j < 7; j++) {
+                        if (currStayDate.toISOString() in hotelPrices) {
+                            hotelSum += hotelPrices[currStayDate.toISOString()];
                         }
                         currStayDate.addDays(1);
                     }
 
-                    if (hotelSum > 0 && currStayDate in flightPrices) {
-                        var flightPrice = Math.round((flightPrices[currStayDate]['price'] / 100));
+                    if (hotelSum > 0 && currStayDate.toISOString() in flightPrices) {
+                        var flightPrice = Math.round((flightPrices[currStayDate.toISOString()]['price'] / 100));
                         var packagePrice = flightPrice + hotelSum;
                         if (packagePrice <= 50000 && packagePrice >= 0) {
 
                             var currentDeal = {
                                 rid: rid,
-                                tla: flightPrices[currStayDate]['tla'],
+                                tla: flightPrices[currStayDate.toISOString()]['tla'],
                                 hotelprice: hotelSum,
                                 flightprice: flightPrice,
-                                totalprice: packagePrice
+                                totalprice: packagePrice,
+                                date: currStayDate.toISOString()
                             };
 
                             pricePackages.push(currentDeal);
@@ -193,12 +219,12 @@ module.exports = function (config) {
                     }
                     startIntervalDate.addDays(1);
                 }
-                //console.log("TOTAL DEALS: ");
-                //console.log(pricePackages.length );
-                //console.log("ALL DEALS: ");
-                //console.log(pricePackages);
-                //console.log("BEST DEAL: ");
-                //console.log(bestDeal);
+                console.log("TOTAL DEALS: ");
+                console.log(pricePackages.length );
+                console.log("ALL DEALS: ");
+                console.log(pricePackages);
+                console.log("BEST DEAL: ");
+                console.log(bestDeal);
 
                 combinedResult.totalDeals = pricePackages.length;
                 combinedResult.pricePackages = pricePackages;
