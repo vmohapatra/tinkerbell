@@ -4,11 +4,11 @@ Expressjs based Node web app
 
 [Author](docs/GENERAL.md)
 
-Pre-requisites
+###Pre-requisites
 
 Ensure you have node and npm installed.
 
-Running the application
+###Running the application
 
 To run the app in dev environment, execute
 
