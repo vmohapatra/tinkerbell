@@ -2,6 +2,8 @@
 
 Expressjs based Node web app 
 
+[Author](docs/General.md)
+
 Pre-requisites
 
 Ensure you have node and npm installed.
