@@ -10,9 +10,9 @@ Expressjs based Node web app
 <details>
     <summary>Running the application</summary>
     <p>To run the app in dev environment, execute</p>
-    ```$ ./bin/www```
+    <p>```$ ./bin/www```</p>
     <p>or</p>
-    ```$ node server.js```
+    <p>```$ node server.js```</p>
 </details>
 
 Running the application
