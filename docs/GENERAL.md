@@ -1,3 +1,3 @@
-[README](README.md) | [Author](GENERAL.md)
+[README](./README.md) | [Author](GENERAL.md)
 
 # Vijaya
