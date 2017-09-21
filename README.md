@@ -2,7 +2,7 @@
 
 Expressjs based Node web app 
 
-[Author](docs/GENERAL.md)
+[README](README.md) | [Author](GENERAL.md)
 
 ### Pre-requisites
 
